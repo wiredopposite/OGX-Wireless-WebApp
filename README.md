@@ -11,7 +11,8 @@ If you run into connection issues, such as nothing happening after clicking "Pai
 
 How to clear Chrome's cache: 
 - Click the 3 dots in the top right corner of the window
-- Select "Clear browsing data", selecting "Cached images and files"
+- Select "Clear browsing data" from the dropdown
+- Select "Cached images and files"
 - Click "Clear data"
 
 Do not select anything else besides "Cached images and files" if you want to keep all your login info and history intact.
