@@ -1,4 +1,6 @@
 # OGX-Wireless Web App
+Visit the app at: https://wiredopposite.github.io/OGX-Wireless-WebApp/
+
 This web app is meant for connecting to, and changing settings on, your OGX-Wireless Bluetooth adapter. It has been developed for Chrome browser on Windows, other operating systems or browsers may not display or work correctly.
 
 ## Settings
