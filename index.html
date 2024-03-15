@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>OGX-Wireless Settings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>OGX-Wireless Settings</h1>
+        <div class="connect-ui">
+            <button class="connect">Connect</button>
+            <label>Make sure your adapter is powered.</label>
+            <div class="error">
+                ⚠️ This browser does not support the Web Bluetooth API. Please try a different browser.
+            </div>
+        </div>
+        <div class="settings-ui">
+
+            
+            <div class="settings">
+
+                <div>
+                    <label>Firmware: <span id="firmwareVersion">v1.0</span></label>
+                </div>
+
+                <div>
+                    <h3>Current Profile</h3>
+                </div>
+                <div class="setting-item">
+                    <select id="profileId"></select>
+                </div>
+
+                <h3>Platform</h3>
+                <div class="setting-item">
+                    <!-- <label for="consoleId">Choose Your Console:</label> -->
+                    <select id="consoleId"></select>
+                    <!-- <label>(Change requires adapter reboot)</label> -->
+                </div>
+
+                <h3>Axis Settings</h3>
+                <div class="setting-item">
+                    <label for="leftJoystickInvert">Invert Y Left</label>
+                    <input type="checkbox" id="leftJoystickInvert">
+                    <span id="leftJoystickInvertValue"></span>
+                </div>
+                <div class="setting-item">
+                    <label for="rightJoystickInvert">Invert Y Right</label>
+                    <input type="checkbox" id="rightJoystickInvert">
+                    <span id="rightJoystickInvertValue"></span>
+                </div>
+
+                <div class="deadzone-settings">
+                    <div class="setting-item">
+                        <label for="leftJoystickDZ">Joystick Left Deadzone</label>
+                        <input type="range" id="leftJoystickDZ" min="0" max="100">
+                        <span id="leftJoystickDZValue"></span>%
+                    </div>
+                    <div class="setting-item">
+                        <label for="rightJoystickDZ">Joystick Right Deadzone</label>
+                        <input type="range" id="rightJoystickDZ" min="0" max="100">
+                        <span id="rightJoystickDZValue"></span>%
+                    </div>
+                    <div class="setting-item">
+                        <label for="leftTriggerDZ">Trigger Left Deadzone</label>
+                        <input type="range" id="leftTriggerDZ" min="0" max="100">
+                        <span id="leftTriggerDZValue"></span>%
+                    </div>
+                    <div class="setting-item">
+                        <label for="rightTriggerDZ">Trigger Right Deadzone</label>
+                        <input type="range" id="rightTriggerDZ" min="0" max="100">
+                        <span id="rightTriggerDZValue"></span>%
+                    </div>
+                </div>
+
+                <h3>Button Mappings</h3>
+                <div class="button-map-settings">
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Dpad-Up">D-Up:</label>
+                            <select class="button-mapping" id="mapping-Dpad-Up"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Dpad-Down">D-Down:</label>
+                            <select class="button-mapping" id="mapping-Dpad-Down"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Dpad-Left">D-Left:</label>
+                            <select class="button-mapping" id="mapping-Dpad-Left"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Dpad-Right">D-Right:</label>
+                            <select class="button-mapping" id="mapping-Dpad-Right"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-A">A:</label>
+                            <select class="button-mapping" id="mapping-A"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-B">B:</label>
+                            <select class="button-mapping" id="mapping-B"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-X">X:</label>
+                            <select class="button-mapping" id="mapping-X"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Y">Y:</label>
+                            <select class="button-mapping" id="mapping-Y"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Left-Stick">L3:</label>
+                            <select class="button-mapping" id="mapping-Left-Stick"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Right-Stick">R3:</label>
+                            <select class="button-mapping" id="mapping-Right-Stick"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Left-Bumper">LB:</label>
+                            <select class="button-mapping" id="mapping-Left-Bumper"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Right-Bumper">RB:</label>
+                            <select class="button-mapping" id="mapping-Right-Bumper"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Start">Start/Plus/Options:</label>
+                            <select class="button-mapping" id="mapping-Start"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Back">Back/Minus/Share:</label>
+                            <select class="button-mapping" id="mapping-Back"></select>
+                        </div>
+                    </div>
+                    <div class="button-pair">
+                        <div class="button-item">
+                            <label for="mapping-Guide">Guide/Home:</label>
+                            <select class="button-mapping" id="mapping-Guide"></select>
+                        </div>
+                        <div class="button-item">
+                            <label for="mapping-Capture">Capture/Mic/Misc:</label>
+                            <select class="button-mapping" id="mapping-Capture"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="save-settings">Save Settings</button>
+                <label>Your last saved profile will be active.</label>
+
+            </div>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
