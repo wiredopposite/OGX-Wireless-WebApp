@@ -7,7 +7,7 @@ This Bluetooth LE web app is meant for connecting to, and changing settings on, 
 The UI will initially display your current active profile options, if you choose a different profile from the dropdown, it will load the settings from that profile into the UI. Your last saved profile will become your current active profile.
 
 ## Connection issues
-If you run into connection issues, such as nothing happening after selecting "Pair", clear Chrome's file cache, reset or power off/on the OGX-Wireless adapter, and reload the webpage. 
+If you run into connection issues, such as nothing happening after clicking "Pair", clear Chrome's file cache, reset or power off/on the OGX-Wireless adapter, and reload the webpage. 
 
 How to clear Chrome's cache: 
 - Click the 3 dots in the top right corner of the window
