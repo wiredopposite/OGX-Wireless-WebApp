@@ -9,4 +9,9 @@ The UI will initially display your current active profile options, if you choose
 ## Connection issues
 If you run into connection issues, such as nothing happening after selecting "Pair", clear Chrome's file cache, reset or power off/on the OGX-Wireless adapter, and reload the webpage. 
 
-You can clear Chrome's cache by clicking the 3 dots in the top right corner of the window, selecting "Clear browsing data", selecting "Cached images and files", and clicking "Clear data". Do not select anything else besides "Cached images and files" if you want to keep all your login info and history intact.
+How to clear Chrome's cache: 
+- Click the 3 dots in the top right corner of the window
+- Select "Clear browsing data", selecting "Cached images and files"
+- Click "Clear data"
+
+Do not select anything else besides "Cached images and files" if you want to keep all your login info and history intact.
