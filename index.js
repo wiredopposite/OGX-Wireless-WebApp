@@ -7,7 +7,7 @@ const CHAR_UUID_FIRMWARE_VER      = '12345678-1234-1234-1234-123456789021';
 
 const CHAR_UUID_ID_AND_NAME       = '12345678-1234-1234-1234-123456789022';
 const CHAR_UUID_MISC_SETTINGS     = '12345678-1234-1234-1234-123456789023';
-const CHAR_UUID_MAP_DPAD          = '12345678-1234-1234-1234-123456789024';
+// const CHAR_UUID_MAP_DPAD          = '12345678-1234-1234-1234-123456789024';
 const CHAR_UUID_MAP_BUTTONS       = '12345678-1234-1234-1234-123456789025';
 const CHAR_UUID_MAP_MISC_BUTTONS  = '12345678-1234-1234-1234-123456789026';
 
@@ -29,13 +29,13 @@ const profileIdValues = {
   0x08: "Profile 8",
 }
 
-const consoleIdValues = {
-  0x01: "Original Xbox",
-  0x02: "XInput",
-  0x03: "Nintendo Switch",
-  0x04: "PS3/D-Input",
-  0x05: "PS Classic"
-};
+// const consoleIdValues = {
+//   0x01: "Original Xbox",
+//   0x02: "XInput",
+//   0x03: "Nintendo Switch",
+//   0x04: "PS3/D-Input",
+//   0x05: "PS Classic"
+// };
 
 const buttonMappings = {
   0x0001: "D-Up",
@@ -93,8 +93,8 @@ async function readProfileData(service) {
   const miscSettingsCharacteristic = await service.getCharacteristic(CHAR_UUID_MISC_SETTINGS);
   const miscSettingsValue = await miscSettingsCharacteristic.readValue();
 
-  const mapDpadCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
-  const dpadMapValues = await mapDpadCharacteristic.readValue();
+  // const mapDpadCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
+  // const dpadMapValues = await mapDpadCharacteristic.readValue();
 
   const mapButtonsCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_BUTTONS);
   const buttonMapValues = await mapButtonsCharacteristic.readValue();
@@ -102,10 +102,10 @@ async function readProfileData(service) {
   const mapMiscButtonsCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_MISC_BUTTONS);
   const buttonMiscMapValues = await mapMiscButtonsCharacteristic.readValue();
 
-  decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, miscSettingsValue, dpadMapValues, buttonMapValues, buttonMiscMapValues);
+  decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, miscSettingsValue, buttonMapValues, buttonMiscMapValues);
 }
 
-async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, miscSettingsValue, dpadMapValues, buttonMapValues, buttonMiscMapValues) {
+async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, miscSettingsValue, buttonMapValues, buttonMiscMapValues) {
   const decoder = new TextDecoder('utf-8');  
 
   const firmwareVersionString = decoder.decode(firmwareVersion);
@@ -142,15 +142,15 @@ async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, mis
   updateInvertCheckbox('rightJoystickInvert', 'rightJoystickInvertValue',  joystickRightInvert);
 
   const receivedMappings = {
-    "Dpad Up":    dpadMapValues.getUint16(0, true),
-    "Dpad Down":  dpadMapValues.getUint16(2, true),
-    "Dpad Left":  dpadMapValues.getUint16(4, true),
-    "Dpad Right": dpadMapValues.getUint16(6, true),
+    "Dpad Up":    buttonMapValues.getUint16(0, true),
+    "Dpad Down":  buttonMapValues.getUint16(2, true),
+    "Dpad Left":  buttonMapValues.getUint16(4, true),
+    "Dpad Right": buttonMapValues.getUint16(6, true),
 
-    "A": buttonMapValues.getUint16(0, true),
-    "B": buttonMapValues.getUint16(2, true),
-    "X": buttonMapValues.getUint16(4, true),
-    "Y": buttonMapValues.getUint16(6, true),
+    "A": buttonMapValues.getUint16(8, true),
+    "B": buttonMapValues.getUint16(10, true),
+    "X": buttonMapValues.getUint16(12, true),
+    "Y": buttonMapValues.getUint16(14, true),
 
     "Left Stick":   buttonMiscMapValues.getUint16(0, true),
     "Right Stick":  buttonMiscMapValues.getUint16(2, true),
@@ -351,7 +351,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function constructUserProfile() {
   const profileId = parseInt(document.getElementById("profileId").value, 16);
-  // const consoleId = parseInt(document.getElementById("consoleId").value, 16);
 
   const leftJoystickInvert = document.getElementById("leftJoystickInvert").checked;
   const rightJoystickInvert = document.getElementById("rightJoystickInvert").checked;
@@ -385,7 +384,6 @@ function constructUserProfile() {
   let userProfile = {
       profile_id: profileId,
       profile_name: "Profile " + profileId,
-      // console_id: consoleId,
       joystick_ly_invert: leftJoystickInvertValue,
       joystick_ry_invert: rightJoystickInvertValue,
       joystick_l_deadzone: leftJoystickDZValue,
@@ -414,7 +412,6 @@ function constructUserProfile() {
 }
 
 function userProfileToByteArrays(userProfile) {
-  // Helper function to create buffer segments
   function createBufferSegment(size, fillCallback) {
       const buffer = new ArrayBuffer(size);
       const view = new DataView(buffer);
@@ -434,9 +431,8 @@ function userProfileToByteArrays(userProfile) {
   });
 
   // Misc Settings segment
-  const miscSettingsArray = createBufferSegment(2 + 4, (view, offset) => 
+  const miscSettingsArray = createBufferSegment(6, (view, offset) => 
   {
-      // view.setUint8(offset++, userProfile.console_id);
       view.setUint8(offset++, userProfile.joystick_ly_invert ? 1 : 0);
       view.setUint8(offset++, userProfile.joystick_ry_invert ? 1 : 0);
       view.setUint8(offset++, userProfile.joystick_l_deadzone);
@@ -445,21 +441,28 @@ function userProfileToByteArrays(userProfile) {
       view.setUint8(offset, userProfile.trigger_r_deadzone);
   });
 
-  // D-Pad Mappings segment
-  const dpadMappingsArray = createBufferSegment(8, (view, offset) => {
-      ['dpad_up', 'dpad_down', 'dpad_left', 'dpad_right'].forEach(field => {
+  const buttonMappingsArray = createBufferSegment(16, (view, offset) => {
+      ['dpad_up', 'dpad_down', 'dpad_left', 'dpad_right', 'a', 'b', 'x', 'y'].forEach(field => {
           view.setUint16(offset, userProfile[field], true);
           offset += 2;
       });
   });
+  
+  // // D-Pad Mappings segment
+  // const dpadMappingsArray = createBufferSegment(8, (view, offset) => {
+  //     ['dpad_up', 'dpad_down', 'dpad_left', 'dpad_right'].forEach(field => {
+  //         view.setUint16(offset, userProfile[field], true);
+  //         offset += 2;
+  //     });
+  // });
 
-  // Button Mappings segment
-  const buttonMappingsArray = createBufferSegment(8, (view, offset) => {
-      ['a', 'b', 'x', 'y'].forEach(field => {
-          view.setUint16(offset, userProfile[field], true);
-          offset += 2;
-      });
-  });
+  // // Button Mappings segment
+  // const buttonMappingsArray = createBufferSegment(8, (view, offset) => {
+  //     ['a', 'b', 'x', 'y'].forEach(field => {
+  //         view.setUint16(offset, userProfile[field], true);
+  //         offset += 2;
+  //     });
+  // });
 
   // Misc Button Mappings segment
   const miscButtonMappingsArray = createBufferSegment(16, (view, offset) => {
@@ -472,7 +475,7 @@ function userProfileToByteArrays(userProfile) {
   return {
       profileIdAndNameArray,
       miscSettingsArray,
-      dpadMappingsArray,
+      // dpadMappingsArray,
       buttonMappingsArray,
       miscButtonMappingsArray
   };
@@ -488,7 +491,7 @@ async function saveSettings()
   const { 
     profileIdAndNameArray, 
     miscSettingsArray, 
-    dpadMappingsArray, 
+    // dpadMappingsArray, 
     buttonMappingsArray, 
     miscButtonMappingsArray 
   } = userProfileToByteArrays(userProfile);
@@ -513,9 +516,9 @@ async function saveSettings()
       const miscSettingsChar = await service.getCharacteristic(CHAR_UUID_MISC_SETTINGS);
       await miscSettingsChar.writeValue(miscSettingsArray);
 
-      // dpad button map
-      const dpadMappingsChar = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
-      await dpadMappingsChar.writeValue(dpadMappingsArray);
+      // // dpad button map
+      // const dpadMappingsChar = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
+      // await dpadMappingsChar.writeValue(dpadMappingsArray);
 
       // abxy button map
       const buttonMappingsChar = await service.getCharacteristic(CHAR_UUID_MAP_BUTTONS);
