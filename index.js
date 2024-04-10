@@ -120,17 +120,17 @@ async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, mis
   const nameArray = new Uint8Array(idAndNameValue.buffer, idAndNameValue.byteOffset + 1, idAndNameValue.byteLength - 1);
   const profileName = decoder.decode(nameArray);
 
-  const consoleId           = miscSettingsValue.getUint8(0);
-  updateConsoleSelect(consoleId);
+  // const consoleId           = miscSettingsValue.getUint8(0);
+  // updateConsoleSelect(consoleId);
 
-  const joystickLeftInvert  = miscSettingsValue.getUint8(1);
-  const joystickRightInvert = miscSettingsValue.getUint8(2);
+  const joystickLeftInvert  = miscSettingsValue.getUint8(0);
+  const joystickRightInvert = miscSettingsValue.getUint8(1);
 
-  const joystickLeftDZ      = miscSettingsValue.getUint8(3);
-  const joystickRightDZ     = miscSettingsValue.getUint8(4);
+  const joystickLeftDZ      = miscSettingsValue.getUint8(2);
+  const joystickRightDZ     = miscSettingsValue.getUint8(3);
 
-  const triggerLeftDZ       = miscSettingsValue.getUint8(5);
-  const triggerRightDZ      = miscSettingsValue.getUint8(6);
+  const triggerLeftDZ       = miscSettingsValue.getUint8(4);
+  const triggerRightDZ      = miscSettingsValue.getUint8(5);
   
   updateDeadzoneSliders('leftJoystickDZ',   'leftJoystickDZValue',  joystickLeftDZ);
   updateDeadzoneSliders('rightJoystickDZ',  'rightJoystickDZValue', joystickRightDZ);
@@ -161,7 +161,6 @@ async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, mis
     "Guide":        buttonMiscMapValues.getUint16(12, true),
     "Capture":      buttonMiscMapValues.getUint16(14, true),
   }
-  // console.log("received lb button:", receivedMappings["Left Bumper"]);
 
   updateUIWithReceivedButtonValues(receivedMappings);
 }
@@ -180,12 +179,12 @@ function updateProfileIdSelect(receivedProfileId) {
   }
 }
 
-function updateConsoleSelect(receivedConsoleId) {
-  const consoleSelectElement = document.getElementById("consoleId");
-  if (consoleSelectElement) {
-    consoleSelectElement.value = receivedConsoleId.toString(16).toUpperCase();
-  }
-}
+// function updateConsoleSelect(receivedConsoleId) {
+//   const consoleSelectElement = document.getElementById("consoleId");
+//   if (consoleSelectElement) {
+//     consoleSelectElement.value = receivedConsoleId.toString(16).toUpperCase();
+//   }
+// }
 
 function updateDeadzoneSliders(sliderId, displayId, value) {
   const slider = document.getElementById(sliderId);
@@ -278,22 +277,22 @@ function populateSelectElements() {
       });
   });
 
-  // Populate consoleId select
-  const consoleSelect = document.getElementById("consoleId");
-  if (consoleSelect && consoleSelect.options.length === 0) { // Check if not already populated
-    Object.entries(consoleIdValues).forEach(([value, label]) => {
-      const option = document.createElement("option");
-      option.value = value; // Make sure these values match the format of receivedConsoleId in updateConsoleSelect
-      option.text = label;
-      consoleSelect.appendChild(option);
-    });
-  }
+  // // Populate consoleId select
+  // const consoleSelect = document.getElementById("consoleId");
+  // if (consoleSelect && consoleSelect.options.length === 0) { // Check if not already populated
+  //   Object.entries(consoleIdValues).forEach(([value, label]) => {
+  //     const option = document.createElement("option");
+  //     option.value = value; // Make sure these values match the format of receivedConsoleId in updateConsoleSelect
+  //     option.text = label;
+  //     consoleSelect.appendChild(option);
+  //   });
+  // }
 
   const profileIdSelect = document.getElementById("profileId");
-  if (profileIdSelect && profileIdSelect.options.length === 0) { // Check if not already populated
+  if (profileIdSelect && profileIdSelect.options.length === 0) {
     Object.entries(profileIdValues).forEach(([value, label]) => {
       const option = document.createElement("option");
-      option.value = value; // Make sure these values match the format of receivedConsoleId in updateConsoleSelect
+      option.value = value; 
       option.text = label;
       profileIdSelect.appendChild(option);
     });
@@ -352,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function constructUserProfile() {
   const profileId = parseInt(document.getElementById("profileId").value, 16);
-  const consoleId = parseInt(document.getElementById("consoleId").value, 16);
+  // const consoleId = parseInt(document.getElementById("consoleId").value, 16);
 
   const leftJoystickInvert = document.getElementById("leftJoystickInvert").checked;
   const rightJoystickInvert = document.getElementById("rightJoystickInvert").checked;
@@ -386,7 +385,7 @@ function constructUserProfile() {
   let userProfile = {
       profile_id: profileId,
       profile_name: "Profile " + profileId,
-      console_id: consoleId,
+      // console_id: consoleId,
       joystick_ly_invert: leftJoystickInvertValue,
       joystick_ry_invert: rightJoystickInvertValue,
       joystick_l_deadzone: leftJoystickDZValue,
@@ -435,8 +434,9 @@ function userProfileToByteArrays(userProfile) {
   });
 
   // Misc Settings segment
-  const miscSettingsArray = createBufferSegment(1 + 2 + 4, (view, offset) => {
-      view.setUint8(offset++, userProfile.console_id);
+  const miscSettingsArray = createBufferSegment(2 + 4, (view, offset) => 
+  {
+      // view.setUint8(offset++, userProfile.console_id);
       view.setUint8(offset++, userProfile.joystick_ly_invert ? 1 : 0);
       view.setUint8(offset++, userProfile.joystick_ry_invert ? 1 : 0);
       view.setUint8(offset++, userProfile.joystick_l_deadzone);
@@ -479,16 +479,11 @@ function userProfileToByteArrays(userProfile) {
 }
 
 
-async function saveSettings() {
-
+async function saveSettings() 
+{
   userProfile = constructUserProfile();
 
-  // print some stuff to make sure we have the right values
-  // console.log("leftjoy dz:", userProfile.joystick_l_deadzone);
-  // console.log("console id:", userProfile.console_id);
   console.log("Saved Profile ID:", userProfile.profile_id);
-  // console.log("a button:", userProfile.a);
-  // console.log("lb button:", userProfile.lb);
 
   const { 
     profileIdAndNameArray, 
