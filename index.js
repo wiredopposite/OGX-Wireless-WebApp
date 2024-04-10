@@ -7,7 +7,6 @@ const CHAR_UUID_FIRMWARE_VER      = '12345678-1234-1234-1234-123456789021';
 
 const CHAR_UUID_ID_AND_NAME       = '12345678-1234-1234-1234-123456789022';
 const CHAR_UUID_MISC_SETTINGS     = '12345678-1234-1234-1234-123456789023';
-// const CHAR_UUID_MAP_DPAD          = '12345678-1234-1234-1234-123456789024';
 const CHAR_UUID_MAP_BUTTONS       = '12345678-1234-1234-1234-123456789025';
 const CHAR_UUID_MAP_MISC_BUTTONS  = '12345678-1234-1234-1234-123456789026';
 
@@ -28,14 +27,6 @@ const profileIdValues = {
   0x07: "Profile 7",
   0x08: "Profile 8",
 }
-
-// const consoleIdValues = {
-//   0x01: "Original Xbox",
-//   0x02: "XInput",
-//   0x03: "Nintendo Switch",
-//   0x04: "PS3/D-Input",
-//   0x05: "PS Classic"
-// };
 
 const buttonMappings = {
   0x0001: "D-Up",
@@ -77,7 +68,7 @@ async function requestDevice() {
     } catch (error) {
         console.error("An error occurred: ", error);
         errorTxt.classList.remove("hide"); // Unhide the error message
-        errorTxt.textContent = `⚠️ An error occurred: ${error.message}`; // Optionally, update the message with the error details
+        errorTxt.textContent = `⚠️ An error occurred: ${error.message}`;
     }
 }
 
@@ -92,9 +83,6 @@ async function readProfileData(service) {
 
   const miscSettingsCharacteristic = await service.getCharacteristic(CHAR_UUID_MISC_SETTINGS);
   const miscSettingsValue = await miscSettingsCharacteristic.readValue();
-
-  // const mapDpadCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
-  // const dpadMapValues = await mapDpadCharacteristic.readValue();
 
   const mapButtonsCharacteristic = await service.getCharacteristic(CHAR_UUID_MAP_BUTTONS);
   const buttonMapValues = await mapButtonsCharacteristic.readValue();
@@ -116,12 +104,8 @@ async function decodeProfileDataAndUpdateUI(firmwareVersion, idAndNameValue, mis
 
   console.log("Retrieved Profile ID:", profileId);
 
-  // Create a new Uint8Array from the buffer starting at the second byte
   const nameArray = new Uint8Array(idAndNameValue.buffer, idAndNameValue.byteOffset + 1, idAndNameValue.byteLength - 1);
   const profileName = decoder.decode(nameArray);
-
-  // const consoleId           = miscSettingsValue.getUint8(0);
-  // updateConsoleSelect(consoleId);
 
   const joystickLeftInvert  = miscSettingsValue.getUint8(0);
   const joystickRightInvert = miscSettingsValue.getUint8(1);
@@ -179,13 +163,6 @@ function updateProfileIdSelect(receivedProfileId) {
   }
 }
 
-// function updateConsoleSelect(receivedConsoleId) {
-//   const consoleSelectElement = document.getElementById("consoleId");
-//   if (consoleSelectElement) {
-//     consoleSelectElement.value = receivedConsoleId.toString(16).toUpperCase();
-//   }
-// }
-
 function updateDeadzoneSliders(sliderId, displayId, value) {
   const slider = document.getElementById(sliderId);
   const display = document.getElementById(displayId);
@@ -237,8 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function onProfileIdChange(event) {
-  const newValue = parseInt(event.target.value, 16); // Assuming the profile ID is in hexadecimal
-  // console.log("Selected Profile ID:", newValue);
+  const newValue = parseInt(event.target.value, 16);
 
   const service = await device.gatt.getPrimaryService(UUID_PRIMARY_SERVICE);
 
@@ -253,11 +229,10 @@ async function onProfileIdChange(event) {
   }
 
   try {
-      // Assuming the profile ID needs to be written to the device
+      // profile ID needs to be written to the device
       const changeActiveProfileIDChar = await service.getCharacteristic(CHAR_UUID_ACTIVE_PROFILE);
       await changeActiveProfileIDChar.writeValue(new Uint8Array([newValue]));
 
-      // Optionally, read profile data if necessary
       await readProfileData(service);
   } catch (error) {
       console.error("Failed to change profile:", error);
@@ -276,17 +251,6 @@ function populateSelectElements() {
           select.appendChild(option);
       });
   });
-
-  // // Populate consoleId select
-  // const consoleSelect = document.getElementById("consoleId");
-  // if (consoleSelect && consoleSelect.options.length === 0) { // Check if not already populated
-  //   Object.entries(consoleIdValues).forEach(([value, label]) => {
-  //     const option = document.createElement("option");
-  //     option.value = value; // Make sure these values match the format of receivedConsoleId in updateConsoleSelect
-  //     option.text = label;
-  //     consoleSelect.appendChild(option);
-  //   });
-  // }
 
   const profileIdSelect = document.getElementById("profileId");
   if (profileIdSelect && profileIdSelect.options.length === 0) {
@@ -329,7 +293,7 @@ function showError(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Function to update the span displaying the slider's value
+  // update slider
   function updateSliderValue(sliderId, valueId) {
       const slider = document.getElementById(sliderId);
       const valueDisplay = document.getElementById(valueId);
@@ -448,23 +412,6 @@ function userProfileToByteArrays(userProfile) {
       });
   });
   
-  // // D-Pad Mappings segment
-  // const dpadMappingsArray = createBufferSegment(8, (view, offset) => {
-  //     ['dpad_up', 'dpad_down', 'dpad_left', 'dpad_right'].forEach(field => {
-  //         view.setUint16(offset, userProfile[field], true);
-  //         offset += 2;
-  //     });
-  // });
-
-  // // Button Mappings segment
-  // const buttonMappingsArray = createBufferSegment(8, (view, offset) => {
-  //     ['a', 'b', 'x', 'y'].forEach(field => {
-  //         view.setUint16(offset, userProfile[field], true);
-  //         offset += 2;
-  //     });
-  // });
-
-  // Misc Button Mappings segment
   const miscButtonMappingsArray = createBufferSegment(16, (view, offset) => {
       ['l3', 'r3', 'back', 'start', 'lb', 'rb', 'sys', 'capture'].forEach(field => {
           view.setUint16(offset, userProfile[field], true);
@@ -475,7 +422,6 @@ function userProfileToByteArrays(userProfile) {
   return {
       profileIdAndNameArray,
       miscSettingsArray,
-      // dpadMappingsArray,
       buttonMappingsArray,
       miscButtonMappingsArray
   };
@@ -516,10 +462,6 @@ async function saveSettings()
       const miscSettingsChar = await service.getCharacteristic(CHAR_UUID_MISC_SETTINGS);
       await miscSettingsChar.writeValue(miscSettingsArray);
 
-      // // dpad button map
-      // const dpadMappingsChar = await service.getCharacteristic(CHAR_UUID_MAP_DPAD);
-      // await dpadMappingsChar.writeValue(dpadMappingsArray);
-
       // abxy button map
       const buttonMappingsChar = await service.getCharacteristic(CHAR_UUID_MAP_BUTTONS);
       await buttonMappingsChar.writeValue(buttonMappingsArray);
@@ -551,4 +493,3 @@ function init() {
 }
 
 init();
-
