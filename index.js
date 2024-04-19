@@ -56,7 +56,8 @@ async function requestDevice() {
         const options = {
             filters: [
               // {services: ['12345678-1234-1234-1234-123456789012']}
-              { name: "OGX-Wireless" }
+              { name: "OGX-Wireless" },
+              { name: "OGX-Wireless-Lite" }
             ],
             acceptAllDevices: false,
             // acceptAllDevices: true,
